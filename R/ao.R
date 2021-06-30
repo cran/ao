@@ -10,13 +10,10 @@
 #' A list of vectors of parameter indices \eqn{1,...,n} of \code{f}.
 #' This determines the grouping of parameters.
 #' Indices can be present in multiple groups.
+#' If one group equals \eqn{1,...,n}, full estimation is carried out.
 #' @param sequence
 #' A vector of indices of the list \code{groups}.
 #' This determines the sequence in which parameter groups get optimized.
-#' @param iterlims
-#' A vector of iteration limits for the different optimization.
-#' Must have the same length as \code{sequence}.
-#' If not supplied, the default \link[stats]{nlm} setting is used.
 #' @param initial
 #' A vector of length \eqn{n} of initial parameter values.
 #' If not supplied, they are randomly drawn.
@@ -26,24 +23,24 @@
 #' @param progress
 #' A boolean, determining whether progress should be printed.
 #' @param ...
-#' Arguments that get passed on to \link[stats]{nlm} (except for \code{iterlim}).
+#' Arguments that get passed on to \link[stats]{nlm}.
 #' @return
 #' A list containing the following components:
 #' \item{optimum}{The optimal value of \code{f}.}
 #' \item{estimate}{The parameter vector at which the optimum of \code{f} is obtained.}
 #' \item{time}{The total optimization time.}
-#' @export
 #' @examples
-#' ao(f = function(x) 3*x[1]^2 + 2*x[1]*x[2] + x[2]^2 - 5*x[1] + 2,
-#'    npar = 2,
-#'    groups = list(1,2),
-#'    sequence = rep(c(1,2),10))
+#' f = function(x) 3*x[1]^2 + 2*x[1]*x[2] + x[2]^2 - 5*x[1] + 2
+#' npar = 2
+#' sequence = rep(c(1,2),10)
+#' groups = list(1,2)
+#' ao(f = f, npar = npar, sequence = sequence, groups = groups)
+#' @export
 
-ao = function(f, npar, groups, sequence, iterlims, initial, minimize = TRUE, progress = FALSE, ...){
+ao = function(f, npar, groups, sequence, initial, minimize = TRUE, progress = FALSE, ...){
 
-  ### read additional inputs and remove 'iterlim' (if submitted)
-  nlm_parameters = as.list(substitute(list(...)))[-1L]
-  nlm_parameters[["iterlim"]] = NULL
+  ### read additional parameters for nlm
+  nlm_parameters = list(...)
 
   ### function that checks if value is an integer
   is.integer = function(x) all(is.numeric(x)) && all(x>0) && all(x%%1==0)
@@ -74,13 +71,7 @@ ao = function(f, npar, groups, sequence, iterlims, initial, minimize = TRUE, pro
   if(any(!seq_len(npar) %in% unlist(groups[unique(sequence)])))
     warning(paste("Parameter(s)",
                   paste(setdiff(seq_len(npar),unlist(groups[unique(sequence)])),collapse=", "),
-                  "did not get optimized."))
-  if(!missing(iterlims)){
-    if(length(sequence) != length(iterlims))
-      stop("'sequence' and 'iterlims' must be of the same length.")
-    if(!is.integer(iterlims))
-      stop("'iterlims' must be a vector of integers.")
-  }
+                  "do not get optimized."))
   if(!missing(initial)){
     if(!is.numeric(initial))
       stop("'initial' must be a numeric vector.")
@@ -102,20 +93,20 @@ ao = function(f, npar, groups, sequence, iterlims, initial, minimize = TRUE, pro
   ### start timer
   t_start = Sys.time()
 
-  for(run in 1:length(sequence)){
+  for(i in 1:length(sequence)){
 
     ### print progress
-    if(progress) cat(sprintf("%.0f%% \r",(run-1)/length(sequence)*100))
+    if(progress) cat(sprintf("%.0f%% \r",(i-1)/length(sequence)*100))
 
     ### select group
-    selected = sequence[run]
+    selected = sequence[i]
 
     ### save fixed values
-    fixed_values = estimate[unlist(groups[-selected])]
+    fixed_values = estimate[-groups[[selected]]]
 
     ### divide estimation problem
     divide = function(theta_small) {
-      theta = numeric(length(unlist(groups)))
+      theta = numeric(npar)
       theta[groups[[selected]]] = theta_small
       theta[-groups[[selected]]] = fixed_values
       out = f(theta)
@@ -131,12 +122,8 @@ ao = function(f, npar, groups, sequence, iterlims, initial, minimize = TRUE, pro
     ### (try to) solve divided estimation problem
     conquer = suppressWarnings(try(
       {
-        p = runif(length(groups[[selected]]))
-        args = list(f = divide, p = p)
-        if(!missing(iterlims))
-          if(!is.na(iterlims[run]))
-            args[["iterlim"]] = iterlims[run]
-        do.call(what = nlm, args = c(args, nlm_parameters))
+        p = estimate[groups[[selected]]]
+        do.call(what = nlm, args = c(list(f = divide, p = p), nlm_parameters))
       }
       ,silent = TRUE))
     if(class(conquer) == "try-error") next
