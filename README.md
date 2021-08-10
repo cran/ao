@@ -1,9 +1,10 @@
-# ao
+# ao <img src="man/figures/logo.png" align="right" height=136 />
 
+[![R-CMD-check](https://github.com/loelschlaeger/ao/workflows/R-CMD-check/badge.svg)](https://github.com/loelschlaeger/ao/actions)
 [![CRAN status](https://www.r-pkg.org/badges/version-last-release/ao)](https://www.r-pkg.org/badges/version-last-release/ao)
 [![CRAN downloads](https://cranlogs.r-pkg.org/badges/grand-total/ao)](https://cranlogs.r-pkg.org/badges/grand-total/ao)
 
-👉 Alternating optimization of high-dimensional functions..
+👉 Alternating optimization of high-dimensional functions.
 
 💬 Found a bug? Request a feature? Please [tell us](https://github.com/loelschlaeger/ao/issues)!
 
@@ -11,7 +12,7 @@
 
 ## How to get started?
 
-1. Define a function `f` that you want to get optimized.
+1. Define a function `f` that you want to optimize.
 
 2. Set `npar` equal to the number of parameters of `f`.
 
@@ -19,7 +20,7 @@
 
 4. Define the vector `sequence`, which determines the sequence in which the parameter groups get optimized.
 
-5. Optionally define the vector `initial` of initial parameter values. If not supplied, they are randomly drawn.
+5. Optionally define the vector `initial` of initial parameter values. If not supplied, they get drawn from a standard normal distribution.
 
 6. Set `minimize = TRUE` for minimizing `f` (the default) or `minimize = FALSE` for maximizing `f`.
 
