@@ -4,9 +4,11 @@
 [![CRAN status](https://www.r-pkg.org/badges/version-last-release/ao)](https://www.r-pkg.org/badges/version-last-release/ao)
 [![CRAN downloads](https://cranlogs.r-pkg.org/badges/grand-total/ao)](https://cranlogs.r-pkg.org/badges/grand-total/ao)
 
-👉 Alternating optimization of high-dimensional functions.
+👉 Alternating optimization of (high-dimensional) functions.
 
 💬 Found a bug? Request a feature? Please [tell us](https://github.com/loelschlaeger/ao/issues)!
+
+🌟 You like the package? Please give it a [star](https://github.com/loelschlaeger/ao).
 
 📝 In R, type `citation("ao")` for citing this package in publications.
 
@@ -29,6 +31,7 @@
 8. Call `ao` with the parameters defined above.
 
 ## Example
+
 ```r
 ao(f = function(x) 3*x[1]^2 + 2*x[1]*x[2] + x[2]^2 - 5*x[1] + 2,
    npar = 2,
