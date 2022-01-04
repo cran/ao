@@ -4,48 +4,58 @@
 \alias{ao}
 \title{Alternating Optimization.}
 \usage{
-ao(f, npar, groups, sequence, initial, minimize = TRUE, progress = FALSE, ...)
+ao(
+  f,
+  partition,
+  initial = 0,
+  iterations = 10,
+  tolerance = 1e-06,
+  minimize = TRUE,
+  progress = FALSE,
+  plot = TRUE
+)
 }
 \arguments{
-\item{f}{A function of \eqn{n} variables to be optimized.}
+\item{f}{An object of class \code{ao_f}, i.e. the output of \code{\link{set_f}}.}
 
-\item{npar}{An integer, the number \eqn{n} of variables of \code{f}.}
+\item{partition}{A list of vectors of parameter indices \eqn{1,...,n} of the function.
+For example, choosing \code{partition = list(1, 2)} as
+in the example optimizes each parameter separately, while choosing
+\code{partition = list(1:2)} leads to joint optimization. Parameter indices
+can be members of multiple subsets.}
 
-\item{groups}{A list of vectors of parameter indices \eqn{1,...,n} of \code{f}.
-This determines the grouping of parameters.
-Indices can be present in multiple groups.
-If one group equals \eqn{1,...,n}, full estimation is carried out.}
+\item{initial}{A vector of length \code{f$npar} of initial parameter values. Per default,
+the algorithm is initialized at the origin.}
 
-\item{sequence}{A vector of indices of the list \code{groups}.
-This determines the sequence in which parameter groups get optimized.}
+\item{iterations}{The number of iterations through all subsets.}
 
-\item{initial}{A vector of length \eqn{n} of initial parameter values.
-If not supplied, they are randomly drawn.}
+\item{tolerance}{A non-negative numeric value. The function terminates prematurely if the
+euclidean distance between the current solution and the one from the last
+iteration is smaller than \code{tolerance}.}
 
-\item{minimize}{A boolean, determining whether to minimize (\code{minimize = TRUE})
-or to maximize (\code{minimize = FALSE}) the function \code{f}.}
+\item{minimize}{If \code{TRUE}, minimization, if \code{FALSE}, maximization.}
 
-\item{progress}{A boolean, determining whether progress should be printed.}
+\item{progress}{If \code{TRUE}, progress is printed.}
 
-\item{...}{Arguments that get passed on to \link[stats]{nlm}.}
+\item{plot}{If \code{TRUE}, the parameter updates are plotted.}
 }
 \value{
-A list containing the following components:
-\item{optimum}{The optimal value of \code{f}.}
-\item{estimate}{The parameter vector at which the optimum of \code{f}
-is obtained.}
-\item{time}{The total optimization time in seconds.}
-\item{nlm_outputs}{A list of \link[stats]{nlm} outputs in each
-\code{sequence}.}
-\item{minimize}{The input \code{minimize}.}
+An object of class \code{ao}, which is a list of
+\itemize{
+\item \code{optimum}, the optimal value,
+\item \code{estimate}, the parameter vector that yields the optimum,
+\item \code{sequence}, a data frame of the estimates in the single iterations,
+\item \code{time}, the total estimation time in seconds.
+}
 }
 \description{
 This function performs alternating optimization on the function \code{f}.
 }
+\details{
+This function depends on \code{\link[optimx]{optimx}}.
+}
 \examples{
-f = function(x) 3*x[1]^2 + 2*x[1]*x[2] + x[2]^2 - 5*x[1] + 2
-npar = 2
-sequence = rep(c(1,2),10)
-groups = list(1,2)
-ao(f = f, npar = npar, sequence = sequence, groups = groups)
+himmelblau <- function(x) (x[1]^2 + x[2] - 11)^2 + (x[1] + x[2]^2 - 7)^2
+f <- set_f(f = himmelblau, npar = 2, lower = -5, upper = 5)
+ao(f = f, partition = list(1, 2))
 }

@@ -1,41 +1,56 @@
-# ao <img src="man/figures/logo.png" align="right" height=136 />
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+# ao: Alternating Optimization <img src="man/figures/logo.png" align="right" alt="" width="120" />
+
+<!-- badges: start -->
 
 [![R-CMD-check](https://github.com/loelschlaeger/ao/workflows/R-CMD-check/badge.svg)](https://github.com/loelschlaeger/ao/actions)
-[![CRAN status](https://www.r-pkg.org/badges/version-last-release/ao)](https://www.r-pkg.org/badges/version-last-release/ao)
-[![CRAN downloads](https://cranlogs.r-pkg.org/badges/grand-total/ao)](https://cranlogs.r-pkg.org/badges/grand-total/ao)
+[![CRAN
+status](https://www.r-pkg.org/badges/version-last-release/ao)](https://www.r-pkg.org/badges/version-last-release/ao)
+[![CRAN
+downloads](https://cranlogs.r-pkg.org/badges/grand-total/ao)](https://cranlogs.r-pkg.org/badges/grand-total/ao)
+[![Codecov test
+coverage](https://codecov.io/gh/loelschlaeger/ao/branch/main/graph/badge.svg)](https://app.codecov.io/gh/loelschlaeger/ao?branch=main)
+<!-- badges: end -->
 
-👉 Alternating optimization of (high-dimensional) functions.
+This package implemented alternating optimization, which is an iterative
+procedure for optimizing some function jointly over all parameters by
+alternating restricted optimization over individual parameter subsets.
 
-💬 Found a bug? Request a feature? Please [tell us](https://github.com/loelschlaeger/ao/issues)!
+See the [vignette](https://loelschlaeger.github.io/ao/articles/ao.html)
+for more details on the method.
 
-🌟 You like the package? Please give it a [star](https://github.com/loelschlaeger/ao).
+## Installation
 
-📝 In R, type `citation("ao")` for citing this package in publications.
+You can install the released version of ao from
+[CRAN](https://CRAN.R-project.org) with:
 
-## How to get started?
+``` r
+install.packages("ao")
+```
 
-1. Define a function `f` that you want to optimize.
+And the development version from [GitHub](https://github.com/) with:
 
-2. Set `npar` equal to the number of parameters of `f`.
-
-3. Group the parameter indices of `f` into the list `groups`, which determines the groups in which parameters get optimized.
-
-4. Define the vector `sequence`, which determines the sequence in which the parameter groups get optimized.
-
-5. Optionally define the vector `initial` of initial parameter values. If not supplied, they get drawn from a standard normal distribution.
-
-6. Set `minimize = TRUE` for minimizing `f` (the default) or `minimize = FALSE` for maximizing `f`.
-
-7. Set `progress = TRUE` for showing optimization progress. Per default, `progress = FALSE`. 
-
-8. Call `ao` with the parameters defined above.
+``` r
+# install.packages("devtools")
+devtools::install_github("loelschlaeger/ao")
+```
 
 ## Example
 
-```r
-ao(f = function(x) 3*x[1]^2 + 2*x[1]*x[2] + x[2]^2 - 5*x[1] + 2,
-   npar = 2,
-   groups = list(1,2),
-   sequence = rep(c(1,2),10))
-```
+This example is explained in detail in the
+[vignette](https://loelschlaeger.github.io/ao/articles/ao.html#application).
 
+``` r
+library(ao)
+#> Thanks for using ao version 0.2.0, happy alternating optimization!
+#> See https://loelschlaeger.github.io/ao for help.
+#> Type 'citation("ao")' for citing this R package.
+himmelblau <- function(x) (x[1]^2+x[2]-11)^2 + (x[1]+x[2]^2-7)^2
+f <- set_f(f = himmelblau, npar = 2, lower = -5, upper = 5)
+ao(f = f, partition = list(1, 2), progress = FALSE, plot = FALSE)
+#> Optimum value: 1.743666 
+#> Optimum at: 3.395691 -1.803183 
+#> Optimization time: 0.1 seconds
+```
