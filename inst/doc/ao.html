@@ -422,7 +422,7 @@ with parameter constraints <span class="math inline">\(-5 \leq x_1, x_2
 \leq 5\)</span>:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;ao&quot;</span>)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Lade nötiges Paket: optimizeR</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Thanks for using {optimizeR} 0.3.0.</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Thanks for using {optimizeR} 0.3.2.</span></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>himmelblau <span class="ot">&lt;-</span> <span class="cf">function</span>(x) (x[<span class="dv">1</span>]<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> x[<span class="dv">2</span>] <span class="sc">-</span> <span class="dv">11</span>)<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> (x[<span class="dv">1</span>] <span class="sc">+</span> x[<span class="dv">2</span>]<span class="sc">^</span><span class="dv">2</span> <span class="sc">-</span> <span class="dv">7</span>)<span class="sc">^</span><span class="dv">2</span></span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ao</span>(<span class="at">f =</span> himmelblau, <span class="at">p =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>), <span class="at">partition =</span> <span class="fu">list</span>(<span class="dv">1</span>, <span class="dv">2</span>),</span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>   <span class="at">base_optimizer =</span> <span class="fu">optimizer_optim</span>(<span class="at">lower =</span> <span class="sc">-</span><span class="dv">5</span>, <span class="at">upper =</span> <span class="dv">5</span>, <span class="at">method =</span> <span class="st">&quot;L-BFGS-B&quot;</span>))</span>
@@ -435,19 +435,19 @@ with parameter constraints <span class="math inline">\(-5 \leq x_1, x_2
 <span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $sequence</span></span>
 <span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    iteration partition         time       p1        p2</span></span>
 <span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1          0         0 0.0000000000 0.000000  0.000000</span></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2          1         1 0.0072860718 3.395691  0.000000</span></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3          1         2 0.0003120899 3.395691 -1.803183</span></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4          2         1 0.0002930164 3.581412 -1.803183</span></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5          2         2 0.0002779961 3.581412 -1.847412</span></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6          3         1 0.0003068447 3.584381 -1.847412</span></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7          3         2 0.0001270771 3.584381 -1.848115</span></span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8          4         1 0.0001320839 3.584427 -1.848115</span></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 9          4         2 0.0001080036 3.584427 -1.848126</span></span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10         5         1 0.0001111031 3.584428 -1.848126</span></span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 11         5         2 0.0001578331 3.584428 -1.848126</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2          1         1 0.0087349415 3.395691  0.000000</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3          1         2 0.0003659725 3.395691 -1.803183</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4          2         1 0.0003030300 3.581412 -1.803183</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5          2         2 0.0002748966 3.581412 -1.847412</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6          3         1 0.0003690720 3.584381 -1.847412</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7          3         2 0.0002288818 3.584381 -1.848115</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8          4         1 0.0002319813 3.584427 -1.848115</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 9          4         2 0.0001449585 3.584427 -1.848126</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10         5         1 0.0001530647 3.584428 -1.848126</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 11         5         2 0.0001459122 3.584428 -1.848126</span></span>
 <span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $time</span></span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Time difference of 0.01261091 secs</span></span></code></pre></div>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Time difference of 0.01552892 secs</span></span></code></pre></div>
 <p>The call minimizes <code>f</code> by alternating optimizing with
 respect to each parameter separately, where the parameters all are
 initialized at the value 0.</p>
