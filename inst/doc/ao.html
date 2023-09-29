@@ -12,7 +12,7 @@
 
 
 
-<title>Alternating optimization with {ao}</title>
+<title>Alternating optimization</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -358,7 +358,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 
 
-<h1 class="title toc-ignore">Alternating optimization with {ao}</h1>
+<h1 class="title toc-ignore">Alternating optimization</h1>
 
 
 
@@ -377,41 +377,40 @@ optimization is as follows:</p>
 <li><p>Assign an initial value for <span class="math inline">\(x\)</span>.</p></li>
 <li><p>Optimize <span class="math inline">\(f\)</span> with respect to a
 subset of parameters <span class="math inline">\(\tilde{x}\)</span>
-while holding the other parameters constant. (Note that alternating
+while holding the other parameters constant. Note that alternating
 optimization is a generalization of joint optimization, where the only
-parameter subset would be the whole set of parameters.)</p></li>
+parameter subset would be the whole set of parameters.</p></li>
 <li><p>Replace the values in <span class="math inline">\(x\)</span> by
 the optimal values for <span class="math inline">\(\tilde{x}\)</span>
 found in step 2.</p></li>
 <li><p>Repeat from step 2 with another parameter subset.</p></li>
-<li><p>Stop when the process has converged or reached an iteration
+<li><p>Stop when the process has converged or reached the iteration
 limit.</p></li>
 </ol>
 </div>
 <div id="when-is-alternating-optimization-a-good-idea" class="section level3">
 <h3>When is alternating optimization a good idea?</h3>
 <ul>
-<li><p>When the joint optimization is (numerically) difficult (or not
-feasible).</p></li>
+<li><p>When the joint optimization is numerically difficult or not
+feasible.</p></li>
 <li><p>When there is a natural division of the parameters. That is the
-case, e.g., for likelihood functions, where the parameter space
-naturally divides into parameter subsets corresponding to linear
-effects, variances and covariances with different influence on the
-likelihood value.</p></li>
-<li><p>To improve optimization time in some cases, see <span class="citation">(<a href="#ref-hu:2002" role="doc-biblioref">Hu and
-Hathaway 2002</a>)</span> for an example.</p></li>
+case for likelihood functions, where the parameter space naturally
+divides into parameter subsets, e.g. corresponding to linear effects,
+variances and covariances with different influence on the likelihood
+value.</p></li>
+<li><p>To improve optimization time in some cases, see <span class="citation">(<a href="#ref-hu:2002">Hu and Hathaway
+2002</a>)</span> for an example.</p></li>
 <li><p>Compared to joint optimization, alternating optimization may be
-better in bypassing local optima, see <span class="citation">(<a href="#ref-bezdek:2002" role="doc-biblioref">James C. Bezdek and
-Hathaway 2002</a>)</span>.</p></li>
+better in bypassing local optima, see <span class="citation">(<a href="#ref-bezdek:2002">James C. Bezdek and Hathaway
+2002</a>)</span>.</p></li>
 </ul>
 </div>
 <div id="what-are-the-properties-of-alternating-optimization" class="section level3">
 <h3>What are the properties of alternating optimization?</h3>
-<p>Alternating optimization (under certain conditions on <span class="math inline">\(f\)</span>) can convergence to the global optimum.
-However, the set of possible solutions also contains saddle points <span class="citation">(<a href="#ref-bezdek:1987" role="doc-biblioref">James
-C. Bezdek et al. 1987</a>)</span>.</p>
-<p><span class="citation">J. Bezdek and Hathaway (<a href="#ref-bezdek:2003" role="doc-biblioref">2003</a>)</span> shows that
-alternating optimization under reasonable assumptions is locally <span class="math inline">\(q\)</span>-linearly convergent.</p>
+<p>Alternating optimization under certain conditions on <span class="math inline">\(f\)</span> can convergence to the global optimum.
+However, the set of possible solutions also contains saddle points <span class="citation">(<a href="#ref-bezdek:1987">James C. Bezdek et al.
+1987</a>)</span>. <span class="citation">J. Bezdek and Hathaway (<a href="#ref-bezdek:2003">2003</a>)</span> provides additional details on
+the convergence rate.</p>
 </div>
 </div>
 <div id="application" class="section level2">
@@ -420,72 +419,38 @@ alternating optimization under reasonable assumptions is locally <span class="ma
 function</a> in <span class="math inline">\(n = 2\)</span> dimensions
 with parameter constraints <span class="math inline">\(-5 \leq x_1, x_2
 \leq 5\)</span>:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;ao&quot;</span>)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Lade nötiges Paket: optimizeR</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Thanks for using {optimizeR} 0.3.2.</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>himmelblau <span class="ot">&lt;-</span> <span class="cf">function</span>(x) (x[<span class="dv">1</span>]<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> x[<span class="dv">2</span>] <span class="sc">-</span> <span class="dv">11</span>)<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> (x[<span class="dv">1</span>] <span class="sc">+</span> x[<span class="dv">2</span>]<span class="sc">^</span><span class="dv">2</span> <span class="sc">-</span> <span class="dv">7</span>)<span class="sc">^</span><span class="dv">2</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ao</span>(<span class="at">f =</span> himmelblau, <span class="at">p =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>), <span class="at">partition =</span> <span class="fu">list</span>(<span class="dv">1</span>, <span class="dv">2</span>),</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>   <span class="at">base_optimizer =</span> <span class="fu">optimizer_optim</span>(<span class="at">lower =</span> <span class="sc">-</span><span class="dv">5</span>, <span class="at">upper =</span> <span class="dv">5</span>, <span class="at">method =</span> <span class="st">&quot;L-BFGS-B&quot;</span>))</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $optimum</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 1.940035e-12</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $estimate</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1]  3.584428 -1.848126</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $sequence</span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    iteration partition         time       p1        p2</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1          0         0 0.0000000000 0.000000  0.000000</span></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2          1         1 0.0087349415 3.395691  0.000000</span></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3          1         2 0.0003659725 3.395691 -1.803183</span></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4          2         1 0.0003030300 3.581412 -1.803183</span></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5          2         2 0.0002748966 3.581412 -1.847412</span></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6          3         1 0.0003690720 3.584381 -1.847412</span></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7          3         2 0.0002288818 3.584381 -1.848115</span></span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8          4         1 0.0002319813 3.584427 -1.848115</span></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 9          4         2 0.0001449585 3.584427 -1.848126</span></span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10         5         1 0.0001530647 3.584428 -1.848126</span></span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 11         5         2 0.0001459122 3.584428 -1.848126</span></span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $time</span></span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Time difference of 0.01552892 secs</span></span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;ao&quot;</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="co">#&gt; Loading required package: optimizeR</span></span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>himmelblau <span class="ot">&lt;-</span> <span class="cf">function</span>(x) (x[<span class="dv">1</span>]<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> x[<span class="dv">2</span>] <span class="sc">-</span> <span class="dv">11</span>)<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> (x[<span class="dv">1</span>] <span class="sc">+</span> x[<span class="dv">2</span>]<span class="sc">^</span><span class="dv">2</span> <span class="sc">-</span> <span class="dv">7</span>)<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="fu">ao</span>(</span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>  <span class="at">f =</span> himmelblau, <span class="at">p =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>), <span class="at">partition =</span> <span class="fu">list</span>(<span class="dv">1</span>, <span class="dv">2</span>),</span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>  <span class="at">base_optimizer =</span> <span class="fu">optimizer_optim</span>(<span class="at">lower =</span> <span class="sc">-</span><span class="dv">5</span>, <span class="at">upper =</span> <span class="dv">5</span>, <span class="at">method =</span> <span class="st">&quot;L-BFGS-B&quot;</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>)</span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a><span class="co">#&gt; $value</span></span>
+<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a><span class="co">#&gt; [1] 1.940035e-12</span></span>
+<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a><span class="co">#&gt; $estimate</span></span>
+<span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a><span class="co">#&gt; [1]  3.584428 -1.848126</span></span>
+<span id="cb1-13"><a href="#cb1-13" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb1-14"><a href="#cb1-14" tabindex="-1"></a><span class="co">#&gt; $sequence</span></span>
+<span id="cb1-15"><a href="#cb1-15" tabindex="-1"></a><span class="co">#&gt;    iteration partition        value      seconds       p1        p2</span></span>
+<span id="cb1-16"><a href="#cb1-16" tabindex="-1"></a><span class="co">#&gt; 1          0        NA 1.700000e+02 0.0000000000 0.000000  0.000000</span></span>
+<span id="cb1-17"><a href="#cb1-17" tabindex="-1"></a><span class="co">#&gt; 2          1         1 1.327270e+01 0.0102341175 3.395691  0.000000</span></span>
+<span id="cb1-18"><a href="#cb1-18" tabindex="-1"></a><span class="co">#&gt; 3          1         2 1.743666e+00 0.0003690720 3.395691 -1.803183</span></span>
+<span id="cb1-19"><a href="#cb1-19" tabindex="-1"></a><span class="co">#&gt; 4          2         1 2.847292e-02 0.0002579689 3.581412 -1.803183</span></span>
+<span id="cb1-20"><a href="#cb1-20" tabindex="-1"></a><span class="co">#&gt; 5          2         2 4.687472e-04 0.0002310276 3.581412 -1.847412</span></span>
+<span id="cb1-21"><a href="#cb1-21" tabindex="-1"></a><span class="co">#&gt; 6          3         1 7.368063e-06 0.0002970695 3.584381 -1.847412</span></span>
+<span id="cb1-22"><a href="#cb1-22" tabindex="-1"></a><span class="co">#&gt; 7          3         2 1.157612e-07 0.0002260208 3.584381 -1.848115</span></span>
+<span id="cb1-23"><a href="#cb1-23" tabindex="-1"></a><span class="co">#&gt; 8          4         1 1.900153e-09 0.0002019405 3.584427 -1.848115</span></span>
+<span id="cb1-24"><a href="#cb1-24" tabindex="-1"></a><span class="co">#&gt; 9          4         2 4.221429e-11 0.0001289845 3.584427 -1.848126</span></span>
+<span id="cb1-25"><a href="#cb1-25" tabindex="-1"></a><span class="co">#&gt; 10         5         1 3.598278e-12 0.0001230240 3.584428 -1.848126</span></span>
+<span id="cb1-26"><a href="#cb1-26" tabindex="-1"></a><span class="co">#&gt; 11         5         2 1.940035e-12 0.0001258850 3.584428 -1.848126</span></span>
+<span id="cb1-27"><a href="#cb1-27" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb1-28"><a href="#cb1-28" tabindex="-1"></a><span class="co">#&gt; $seconds</span></span>
+<span id="cb1-29"><a href="#cb1-29" tabindex="-1"></a><span class="co">#&gt; [1] 0.01219511</span></span></code></pre></div>
 <p>The call minimizes <code>f</code> by alternating optimizing with
 respect to each parameter separately, where the parameters all are
 initialized at the value 0.</p>
-<p>The <code>ao()</code> function has the following arguments:</p>
-<ul>
-<li><code>f</code>: The function to be optimized, returning a single
-numeric value. The first argument of <code>f</code> must be a numeric
-vector of the length of <code>p</code> followed by any other arguments
-specified by the <code>...</code> argument.</li>
-<li><code>p</code>: Starting parameter values for the optimization.</li>
-<li><code>...</code>: Additional arguments to be passed to
-<code>f</code>.</li>
-<li><code>partition</code>: A list of vectors of indices of
-<code>p</code>, specifying the partition of the alternating
-optimization. The default is <code>as.list(1:length(p))</code>,
-i.e. each parameter is optimized separately. Parameter indices can be
-members of multiple subsets.</li>
-<li><code>base_optimizer</code>: An object of class
-<code>optimizer</code>, which can be specified via
-<code>optimizeR::set_optimizer()</code>. The default optimizer is
-<code>stats::optim()</code>.</li>
-<li><code>iterations</code>: The number of iterations through the
-partitions. The default is <code>10</code>.</li>
-<li><code>tolerance</code>: A non-negative numeric value. The function
-terminates prematurely if the euclidean distance between the current
-solution and the one from the last iteration is smaller than
-<code>tolerance</code>. The default is <code>1e-6</code>.</li>
-<li><code>print.level</code>: This argument determines the level of
-printing which is done during the optimization process. Three values
-(analogue to <code>stats::nlm()</code>) can be specified:
-<ul>
-<li><code>0</code> (the default): no printing</li>
-<li><code>1</code>: initial and final details are printed</li>
-<li><code>2</code>: full tracing information is printed</li>
-</ul></li>
-<li><code>plot</code>: If <code>TRUE</code>, the parameter updates are
-plotted. The default is <code>FALSE</code>.</li>
-</ul>
 </div>
 <div id="references" class="section level2 unnumbered">
 <h2 class="unnumbered">References</h2>
