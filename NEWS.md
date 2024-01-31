@@ -1,3 +1,11 @@
+# ao 0.3.1
+
+* Added package start up-message.
+
+* Added more details to README file.
+
+* Increased required version of `{optimizeR}` to version 1.0.3.
+
 # ao 0.3.0
 
 * Updated code to the new `{optimizeR}` version 1.0.1.
