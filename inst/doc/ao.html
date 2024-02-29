@@ -421,7 +421,7 @@ with parameter constraints <span class="math inline">\(-5 \leq x_1, x_2
 \leq 5\)</span>:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;ao&quot;</span>)</span>
 <span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="co">#&gt; Loading required package: optimizeR</span></span>
-<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="co">#&gt; Thanks for using {ao} 0.3.2, happy alternating optimization!</span></span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="co">#&gt; Thanks for using {ao} version 0.3.3, happy alternating optimization!</span></span>
 <span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="co">#&gt; Documentation: https://loelschlaeger.de/ao</span></span>
 <span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>himmelblau <span class="ot">&lt;-</span> <span class="cf">function</span>(x) (x[<span class="dv">1</span>]<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> x[<span class="dv">2</span>] <span class="sc">-</span> <span class="dv">11</span>)<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> (x[<span class="dv">1</span>] <span class="sc">+</span> x[<span class="dv">2</span>]<span class="sc">^</span><span class="dv">2</span> <span class="sc">-</span> <span class="dv">7</span>)<span class="sc">^</span><span class="dv">2</span></span>
 <span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a><span class="fu">ao</span>(</span>
@@ -439,19 +439,19 @@ with parameter constraints <span class="math inline">\(-5 \leq x_1, x_2
 <span id="cb1-18"><a href="#cb1-18" tabindex="-1"></a><span class="co">#&gt; $sequence</span></span>
 <span id="cb1-19"><a href="#cb1-19" tabindex="-1"></a><span class="co">#&gt;    iteration partition        value      seconds       p1        p2</span></span>
 <span id="cb1-20"><a href="#cb1-20" tabindex="-1"></a><span class="co">#&gt; 1          0        NA 1.700000e+02 0.0000000000 0.000000  0.000000</span></span>
-<span id="cb1-21"><a href="#cb1-21" tabindex="-1"></a><span class="co">#&gt; 2          1         1 1.327270e+01 0.0090868473 3.395691  0.000000</span></span>
-<span id="cb1-22"><a href="#cb1-22" tabindex="-1"></a><span class="co">#&gt; 3          1         2 1.743666e+00 0.0010249615 3.395691 -1.803183</span></span>
-<span id="cb1-23"><a href="#cb1-23" tabindex="-1"></a><span class="co">#&gt; 4          2         1 2.847292e-02 0.0008120537 3.581412 -1.803183</span></span>
-<span id="cb1-24"><a href="#cb1-24" tabindex="-1"></a><span class="co">#&gt; 5          2         2 4.687472e-04 0.0006439686 3.581412 -1.847412</span></span>
-<span id="cb1-25"><a href="#cb1-25" tabindex="-1"></a><span class="co">#&gt; 6          3         1 7.368063e-06 0.0010750294 3.584381 -1.847412</span></span>
-<span id="cb1-26"><a href="#cb1-26" tabindex="-1"></a><span class="co">#&gt; 7          3         2 1.157612e-07 0.0004320145 3.584381 -1.848115</span></span>
-<span id="cb1-27"><a href="#cb1-27" tabindex="-1"></a><span class="co">#&gt; 8          4         1 1.900153e-09 0.0004239082 3.584427 -1.848115</span></span>
-<span id="cb1-28"><a href="#cb1-28" tabindex="-1"></a><span class="co">#&gt; 9          4         2 4.221429e-11 0.0003421307 3.584427 -1.848126</span></span>
-<span id="cb1-29"><a href="#cb1-29" tabindex="-1"></a><span class="co">#&gt; 10         5         1 3.598278e-12 0.0003368855 3.584428 -1.848126</span></span>
-<span id="cb1-30"><a href="#cb1-30" tabindex="-1"></a><span class="co">#&gt; 11         5         2 1.940035e-12 0.0003368855 3.584428 -1.848126</span></span>
+<span id="cb1-21"><a href="#cb1-21" tabindex="-1"></a><span class="co">#&gt; 2          1         1 1.327270e+01 0.0093390942 3.395691  0.000000</span></span>
+<span id="cb1-22"><a href="#cb1-22" tabindex="-1"></a><span class="co">#&gt; 3          1         2 1.743666e+00 0.0009489059 3.395691 -1.803183</span></span>
+<span id="cb1-23"><a href="#cb1-23" tabindex="-1"></a><span class="co">#&gt; 4          2         1 2.847292e-02 0.0007188320 3.581412 -1.803183</span></span>
+<span id="cb1-24"><a href="#cb1-24" tabindex="-1"></a><span class="co">#&gt; 5          2         2 4.687472e-04 0.0006120205 3.581412 -1.847412</span></span>
+<span id="cb1-25"><a href="#cb1-25" tabindex="-1"></a><span class="co">#&gt; 6          3         1 7.368063e-06 0.0011599064 3.584381 -1.847412</span></span>
+<span id="cb1-26"><a href="#cb1-26" tabindex="-1"></a><span class="co">#&gt; 7          3         2 1.157612e-07 0.0004951954 3.584381 -1.848115</span></span>
+<span id="cb1-27"><a href="#cb1-27" tabindex="-1"></a><span class="co">#&gt; 8          4         1 1.900153e-09 0.0004329681 3.584427 -1.848115</span></span>
+<span id="cb1-28"><a href="#cb1-28" tabindex="-1"></a><span class="co">#&gt; 9          4         2 4.221429e-11 0.0003859997 3.584427 -1.848126</span></span>
+<span id="cb1-29"><a href="#cb1-29" tabindex="-1"></a><span class="co">#&gt; 10         5         1 3.598278e-12 0.0003240108 3.584428 -1.848126</span></span>
+<span id="cb1-30"><a href="#cb1-30" tabindex="-1"></a><span class="co">#&gt; 11         5         2 1.940035e-12 0.0003900528 3.584428 -1.848126</span></span>
 <span id="cb1-31"><a href="#cb1-31" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb1-32"><a href="#cb1-32" tabindex="-1"></a><span class="co">#&gt; $seconds</span></span>
-<span id="cb1-33"><a href="#cb1-33" tabindex="-1"></a><span class="co">#&gt; [1] 0.01451468</span></span></code></pre></div>
+<span id="cb1-33"><a href="#cb1-33" tabindex="-1"></a><span class="co">#&gt; [1] 0.01480699</span></span></code></pre></div>
 <p>The call minimizes <code>f</code> by alternating optimizing with
 respect to each parameter separately, where the parameters all are
 initialized at the value 0.</p>
