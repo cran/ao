@@ -1,8 +1,20 @@
+# ao 1.1.0
+
+* Alternating optimization can now be run in multiple (possibly parallel) threads by providing a `list` of values for the `initial`, `partition`, and/or `base_optimizer` parameters, where each combination creates a separate alternating optimization thread.
+
+# ao 1.0.1
+
+* Removed `update_code` from output. Updates are now accepted regardless whether they improve the function value. In the end, the best solution is returned.
+
+* Added `tolerance_history` argument to compare function value and parameters between more than one iteration.
+
+* Added `hide_warnings` argument to hide warnings during the AO procedure.
+
 # ao 1.0.0
 
-* Implemented random partitions and other stopping criteria.
+* Implemented random partitions, parameter bounds, new stopping criteria (iteration limit, time limit, change in function value, change in parameters).
 
-* The `ao()` API has changes a lot, please check the documentation.
+* The `ao()` API did change a lot, please check the documentation.
 
 # ao 0.3.3
 

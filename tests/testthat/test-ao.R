@@ -46,7 +46,7 @@ test_that("ao with a different base optimizer works", {
   himmelblau <- function(x) (x[1]^2 + x[2] - 11)^2 + (x[1] + x[2]^2 - 7)^2
   expect_warning(
     checkmate::expect_list(
-      ao(f = himmelblau, initial = c(0, 0), base_optimizer = optimizeR::optimizer_nlm()),
+      ao(f = himmelblau, initial = c(0, 0), base_optimizer = optimizeR::optimizer_nlm(), hide_warnings = FALSE),
       len = 5
     ),
     "Arguments `gradient`, `lower`, and `upper` are ignored"
@@ -67,4 +67,18 @@ test_that("ao with custom partition works", {
     ao(f = f, initial = c(1, 1, 1, 1), partition = list(1, 2, 3:4)),
     len = 5
   )
+})
+
+test_that("multiple ao threads work", {
+  himmelblau <- function(x) (x[1]^2 + x[2] - 11)^2 + (x[1] + x[2]^2 - 7)^2
+  out <- ao(
+    f = himmelblau,
+    initial = list(c(0, 0), c(1, 1)),
+    partition = list("random", list(2, 1), "none", "sequential"),
+    base_optimizer = list(
+      optimizeR::optimizer_nlm(),
+      optimizeR::optimizer_optim()
+    )
+  )
+  checkmate::expect_list(out)
 })

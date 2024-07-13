@@ -26,8 +26,10 @@ set.seed(2)
 #    tolerance_value = 1e-6,
 #    tolerance_parameter = 1e-6,
 #    tolerance_parameter_norm = function(x, y) sqrt(sum((x - y)^2)),
+#    tolerance_history = 1,
 #    base_optimizer = Optimizer$new("stats::optim", method = "L-BFGS-B"),
-#    verbose = FALSE
+#    verbose = FALSE,
+#    hide_warnings = TRUE
 #  )
 
 ## ----himmelblau---------------------------------------------------------------
@@ -109,7 +111,7 @@ out <- ao(
   partition = "random",
   minimize = FALSE
 )
-round(out$details)
+round(out$details, 2)
 
 ## ----normal mixture type 2----------------------------------------------------
 normal_mixture_llk <- function(data, mu, sd, lambda) {
