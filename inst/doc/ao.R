@@ -8,29 +8,31 @@ library("ao")
 set.seed(2)
 
 ## ----ao call, eval = FALSE----------------------------------------------------
-#  ao(
-#    f,
-#    initial,
-#    target = NULL,
-#    npar = NULL,
-#    gradient = NULL,
-#    ...,
-#    partition = "sequential",
-#    new_block_probability = 0.5,
-#    minimum_block_number = 2,
-#    minimize = TRUE,
-#    lower = -Inf,
-#    upper = Inf,
-#    iteration_limit = Inf,
-#    seconds_limit = Inf,
-#    tolerance_value = 1e-6,
-#    tolerance_parameter = 1e-6,
-#    tolerance_parameter_norm = function(x, y) sqrt(sum((x - y)^2)),
-#    tolerance_history = 1,
-#    base_optimizer = Optimizer$new("stats::optim", method = "L-BFGS-B"),
-#    verbose = FALSE,
-#    hide_warnings = TRUE
-#  )
+# ao(
+#   f,
+#   initial,
+#   target = NULL,
+#   npar = NULL,
+#   gradient = NULL,
+#   hessian = NULL,
+#   ...,
+#   partition = "sequential",
+#   new_block_probability = 0.3,
+#   minimum_block_number = 1,
+#   minimize = TRUE,
+#   lower = NULL,
+#   upper = NULL,
+#   iteration_limit = Inf,
+#   seconds_limit = Inf,
+#   tolerance_value = 1e-6,
+#   tolerance_parameter = 1e-6,
+#   tolerance_parameter_norm = function(x, y) sqrt(sum((x - y)^2)),
+#   tolerance_history = 1,
+#   base_optimizer = Optimizer$new("stats::optim", method = "L-BFGS-B"),
+#   verbose = FALSE,
+#   hide_warnings = TRUE,
+#   add_details = TRUE
+# )
 
 ## ----himmelblau---------------------------------------------------------------
 himmelblau <- function(x) (x[1]^2 + x[2] - 11)^2 + (x[1] + x[2]^2 - 7)^2
@@ -74,18 +76,18 @@ gradient <- function(x) {
   )
 }
 
-## ----ao himmelblau with gradient, eval = FALSE--------------------------------
-#  ao(f = himmelblau, initial = c(0, 0), gradient = gradient)
+## ----ao himmelblau with gradient----------------------------------------------
+ao(f = himmelblau, initial = c(0, 0), gradient = gradient, add_details = FALSE)
 
 ## ----partition demo-----------------------------------------------------------
-procedure <- ao:::Procedure$new(
+process <- ao:::Process$new(
   npar = 10,
   partition = "random",
   new_block_probability = 0.5,
   minimum_block_number = 2
 )
-procedure$get_partition()
-procedure$get_partition()
+process$get_partition()
+process$get_partition()
 
 ## ----visualize_faithful, echo = FALSE, message = FALSE, warning = FALSE, fig.align = 'center', out.width = "80%", fig.dim = c(8, 6)----
 library("ggplot2")
@@ -114,9 +116,9 @@ out <- ao(
 round(out$details, 2)
 
 ## ----normal mixture type 2----------------------------------------------------
-normal_mixture_llk <- function(data, mu, sd, lambda) {
-  sd <- exp(sd)
-  lambda <- plogis(lambda)
+normal_mixture_llk <- function(data, mu, lsd, llambda) {
+  sd <- exp(lsd)
+  lambda <- plogis(llambda)
   c1 <- lambda * dnorm(data, mu[1], sd[1])
   c2 <- (1 - lambda) * dnorm(data, mu[2], sd[2])
   sum(log(c1 + c2))
@@ -126,7 +128,7 @@ normal_mixture_llk <- function(data, mu, sd, lambda) {
 ao(
   f = normal_mixture_llk,
   initial = runif(5),
-  target = c("mu", "sd", "lambda"),
+  target = c("mu", "lsd", "llambda"),
   npar = c(2, 2, 1),
   data = datasets::faithful$eruptions,
   partition = "random",
@@ -150,4 +152,24 @@ ao(
   lower = c(-Inf, -Inf, 0, 0, 0),
   upper = c(Inf, Inf, Inf, Inf, 1)
 )
+
+## ----normal mixture type 4, warning = FALSE-----------------------------------
+normal_mixture_llk <- function(mu, sd, lambda, data) {
+  c1 <- lambda * dnorm(data, mu[1], sd[1])
+  c2 <- (1 - lambda) * dnorm(data, mu[2], sd[2])
+  sum(log(c1 + c2))
+}
+out <- ao(
+  f = normal_mixture_llk,
+  initial = list(runif(5), runif(5)),
+  target = c("mu", "sd", "lambda"),
+  npar = c(2, 2, 1),
+  data = datasets::faithful$eruptions,
+  partition = list("random", "random", "random"),
+  minimize = FALSE,
+  lower = c(-Inf, -Inf, 0, 0, 0),
+  upper = c(Inf, Inf, Inf, Inf, 1)
+)
+names(out)
+out$values
 
