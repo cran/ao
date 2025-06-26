@@ -1,6 +1,6 @@
 Package: ao
 Title: Alternating Optimization
-Version: 1.2.0
+Version: 1.2.1
 Authors@R: 
     c(
     person(given = "Lennart",
@@ -23,17 +23,17 @@ BugReports: https://github.com/loelschlaeger/ao/issues
 License: GPL-3
 Encoding: UTF-8
 RoxygenNote: 7.3.2
-Imports: checkmate, cli, future.apply, oeli (>= 0.7.2), progressr, R6,
+Imports: checkmate, cli, future.apply, oeli (>= 0.7.3), progressr, R6,
         stats, utils
 Suggests: devtools, ggplot2, knitr, rmarkdown, testthat (>= 3.0.0)
 Config/testthat/edition: 3
 VignetteBuilder: knitr
-Depends: R (>= 4.0.0), optimizeR (>= 1.2.0)
+Depends: R (>= 4.0.0), optimizeR (>= 1.2.1)
 NeedsCompilation: no
-Packaged: 2025-04-24 18:18:55 UTC; Lennart Oelschläger
-Author: Lennart Oelschläger [aut, cre]
-    (<https://orcid.org/0000-0001-5421-9313>),
+Packaged: 2025-06-26 16:07:19 UTC; Lennart Oelschläger
+Author: Lennart Oelschläger [aut, cre] (ORCID:
+    <https://orcid.org/0000-0001-5421-9313>),
   Siddhartha Chib [ctb]
 Maintainer: Lennart Oelschläger <oelschlaeger.lennart@gmail.com>
 Repository: CRAN
-Date/Publication: 2025-04-25 08:50:10 UTC
+Date/Publication: 2025-06-26 16:20:02 UTC
