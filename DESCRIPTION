@@ -1,6 +1,6 @@
 Package: ao
 Title: Alternating Optimization
-Version: 1.2.1
+Version: 1.2.2
 Authors@R: 
     c(
     person(given = "Lennart",
@@ -30,10 +30,10 @@ Config/testthat/edition: 3
 VignetteBuilder: knitr
 Depends: R (>= 4.0.0), optimizeR (>= 1.2.1)
 NeedsCompilation: no
-Packaged: 2025-06-26 16:07:19 UTC; Lennart Oelschläger
+Packaged: 2025-12-15 16:48:14 UTC; Lennart Oelschläger
 Author: Lennart Oelschläger [aut, cre] (ORCID:
     <https://orcid.org/0000-0001-5421-9313>),
   Siddhartha Chib [ctb]
 Maintainer: Lennart Oelschläger <oelschlaeger.lennart@gmail.com>
 Repository: CRAN
-Date/Publication: 2025-06-26 16:20:02 UTC
+Date/Publication: 2025-12-15 17:00:02 UTC
