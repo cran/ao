@@ -2,7 +2,10 @@
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  fig.path = "ao-"
+  fig.align = "center",
+  fig.dim = c(8, 6),
+  fig.path = "ao-",
+  out.width = "80%"
 )
 library("ao")
 set.seed(2)
@@ -28,7 +31,9 @@ set.seed(2)
 #   tolerance_parameter = 1e-6,
 #   tolerance_parameter_norm = function(x, y) sqrt(sum((x - y)^2)),
 #   tolerance_history = 1,
-#   base_optimizer = Optimizer$new("stats::optim", method = "L-BFGS-B"),
+#   base_optimizer = optimizeR::Optimizer$new(
+#     "stats::optim", method = "L-BFGS-B"
+#   ),
 #   verbose = FALSE,
 #   hide_warnings = TRUE,
 #   add_details = TRUE
@@ -40,7 +45,7 @@ himmelblau <- function(x) (x[1]^2 + x[2] - 11)^2 + (x[1] + x[2]^2 - 7)^2
 ## ----himmelblau evaluate------------------------------------------------------
 himmelblau(c(3, 2))
 
-## ----visualize_himmelblau, echo = FALSE, message = FALSE, warning = FALSE, fig.align = 'center', out.width = "80%", fig.dim = c(8, 6)----
+## ----visualize_himmelblau, echo = FALSE, message = FALSE, warning = FALSE-----
 library("ggplot2")
 x <- y <- seq(-5, 5, 0.1)
 grid <- expand.grid(x, y)
@@ -89,7 +94,7 @@ process <- ao:::Process$new(
 process$get_partition()
 process$get_partition()
 
-## ----visualize_faithful, echo = FALSE, message = FALSE, warning = FALSE, fig.align = 'center', out.width = "80%", fig.dim = c(8, 6)----
+## ----visualize_faithful, echo = FALSE, message = FALSE, warning = FALSE-------
 library("ggplot2")
 ggplot(datasets::faithful, aes(x = eruptions)) +
   geom_histogram(aes(y = after_stat(density)), bins = 30) +

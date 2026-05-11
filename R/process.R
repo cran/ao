@@ -3,11 +3,18 @@
 #' @description
 #' This object specifies an AO process.
 #'
-#' @param npar \[`integer(1)`\]\cr
-#' The (total) length of the target argument(s).
+#' @param target \[`character()` | `NULL`\]\cr
+#' The name(s) of the argument(s) over which \code{f} is optimized.
+#'
+#' This can only be \code{numeric} arguments.
+#'
+#' If `NULL` (default), the first argument of `f` is optimized.
+#'
+#' @param npar \[`integer()`\]\cr
+#' The length(s) of the target argument(s).
 #'
 #' @param partition \[`character(1)` | `list()`\]\cr
-#' Defines the parameter partition, and can be either
+#' Defines the parameter partition. It can be
 #'
 #' * `"sequential"` for treating each parameter separately,
 #' * `"random"` for a random partition in each iteration,
@@ -18,7 +25,7 @@
 #' @param new_block_probability \[`numeric(1)`\]\cr
 #' Only relevant if `partition = "random"`.
 #'
-#' The probability for a new parameter block when creating a random
+#' The probability of creating a new parameter block when creating a random
 #' partition.
 #'
 #' Values close to 0 result in larger parameter blocks, values close to 1
@@ -48,37 +55,37 @@
 #'
 #' Can also be `Inf` for no time limit.
 #'
-#' Note that this stopping criteria is only checked *after* a sub-problem is
-#' solved and not *within* solving a sub-problem, so the actual process time can
-#' exceed this limit.
+#' Note that this stopping criterion is only checked *after* a sub-problem is
+#' solved and not *within* solving a sub-problem, so the actual process
+#' time can exceed this limit.
 #'
 #' @param tolerance_value \[`numeric(1)`\]\cr
 #' A non-negative tolerance value. The AO process terminates
-#' if the absolute difference between the current function value and the one
-#' before \code{tolerance_history} iterations is smaller than
+#' if the absolute difference between the current function value and the value
+#' from \code{tolerance_history} iterations earlier is smaller than
 #' \code{tolerance_value}.
 #'
 #' Can be `0` for no value threshold.
 #'
 #' @param tolerance_parameter \[`numeric(1)`\]\cr
 #' A non-negative tolerance value. The AO process terminates if
-#' the distance between the current estimate and the before
-#' \code{tolerance_history} iterations is smaller than
+#' the distance between the current estimate and the estimate from
+#' \code{tolerance_history} iterations earlier is smaller than
 #' \code{tolerance_parameter}.
 #'
 #' Can be `0` for no parameter threshold.
 #'
-#' By default, the distance is measured using the euclidean norm, but another
+#' By default, the distance is measured using the Euclidean norm, but another
 #' norm can be specified via the \code{tolerance_parameter_norm} field.
 #'
 #' @param tolerance_parameter_norm \[`function`\]\cr
-#' The norm that measures the distance between the current estimate and the
-#' one from the last iteration. If the distance is smaller than
+#' The norm that measures the distance between two estimates. If the distance
+#' is smaller than
 #' \code{tolerance_parameter}, the AO process is terminated.
 #'
 #' It must be of the form \code{function(x, y)} for two vector inputs
 #' \code{x} and \code{y}, and return a single \code{numeric} value.
-#' By default, the euclidean norm \code{function(x, y) sqrt(sum((x - y)^2))}
+#' By default, the Euclidean norm \code{function(x, y) sqrt(sum((x - y)^2))}
 #' is used.
 #'
 #' @param tolerance_history \[`integer(1)`\]\cr
@@ -135,6 +142,7 @@ Process <- R6::R6Class("Process",
    #' Creates a new object of this [R6][R6::R6Class] class.
 
    initialize = function(
+     target = NULL,
      npar = integer(),
      partition = "sequential",
      new_block_probability = 0.3,
@@ -150,10 +158,17 @@ Process <- R6::R6Class("Process",
      add_details = TRUE
     ) {
      oeli::input_check_response(
-       check = checkmate::check_int(npar, lower = 0),
+       check = checkmate::check_integerish(npar, lower = 0),
        var_name = "npar"
      )
+     oeli::input_check_response(
+       check = checkmate::check_character(
+         target, len = length(npar), unique = TRUE, null.ok = TRUE
+        ),
+       var_name = "target"
+     )
      private$.npar <- npar
+     private$.target <- target
      self$partition <- partition
      self$new_block_probability <- new_block_probability
      self$minimum_block_number <- minimum_block_number
@@ -218,11 +233,11 @@ Process <- R6::R6Class("Process",
    initialize_details = function(initial_parameter, initial_value) {
      private$.details <- structure(
        data.frame(
-         t(c(0L, initial_value, initial_parameter, rep(0, self$npar), 0))
+         t(c(0L, initial_value, initial_parameter, rep(0, sum(self$npar)), 0))
        ),
        names = c(
-         "iteration", "value", paste0("p", seq_len(self$npar)),
-         paste0("b", seq_len(self$npar)), "seconds"
+         "iteration", "value", paste0("p", seq_len(sum(self$npar))),
+         paste0("b", seq_len(sum(self$npar))), "seconds"
        )
      )
      invisible(self)
@@ -256,7 +271,7 @@ Process <- R6::R6Class("Process",
      ### check inputs
      check_block <- checkmate::check_integerish(
        block,
-       unique = TRUE, lower = 1, upper = self$npar
+       unique = TRUE, lower = 1, upper = sum(self$npar)
      )
      check_value <- checkmate::check_number(
        value,
@@ -322,10 +337,15 @@ Process <- R6::R6Class("Process",
 
    get_partition = function() {
      if (checkmate::test_string(self$partition)) {
-       switch(self$partition,
-              "sequential" = as.list(seq_len(self$npar)),
-              "random"     = private$.generate_random_partition(),
-              "none"       = list(seq_len(self$npar))
+       switch(
+         self$partition,
+         "sequential" = as.list(seq_len(sum(self$npar))),
+         "random"     = generate_random_partition(
+            x = seq_len(sum(self$npar)),
+            p = self$new_block_probability,
+            min = self$minimum_block_number
+          ),
+          "none"       = list(seq_len(sum(self$npar)))
        )
      } else {
        self$partition
@@ -351,11 +371,13 @@ Process <- R6::R6Class("Process",
      )
      oeli::input_check_response(
        check = list(
-         checkmate::test_choice(which_block, c("first", "last"), null.ok = TRUE),
+         checkmate::test_choice(
+           which_block, c("first", "last"), null.ok = TRUE
+         ),
          checkmate::test_integerish(
            which_block,
-           lower = 1, upper = self$npar, unique = TRUE,
-           min.len = 1, max.len = self$npar, any.missing = FALSE
+           lower = 1, upper = sum(self$npar), unique = TRUE,
+           min.len = 1, max.len = sum(self$npar), any.missing = FALSE
          )
        ),
        var_name = "which_block"
@@ -375,7 +397,8 @@ Process <- R6::R6Class("Process",
      block_columns <- which(startsWith(colnames(details), "b"))
 
      if (!is.null(which_iteration)) {
-       details <- details[details$iteration %in% which_iteration, , drop = FALSE]
+       ids <- details$iteration %in% which_iteration
+       details <- details[ids, , drop = FALSE]
      }
 
      if (!is.null(which_block)) {
@@ -383,7 +406,8 @@ Process <- R6::R6Class("Process",
          rows <- oeli::vector_occurrence(details$iteration, which_block)
        } else {
          target <- sort(as.integer(which_block))
-         rows <- which(apply(details[, block_columns, drop = FALSE], 1, function(x) {
+         block_details <- details[, block_columns, drop = FALSE]
+         rows <- which(apply(block_details, 1, function(x) {
            active <- which(as.numeric(x) == 1)
            identical(active, target)
          }))
@@ -493,7 +517,10 @@ Process <- R6::R6Class("Process",
 
      ### input checks
      oeli::input_check_response(
-       check = checkmate::check_choice(parameter_type, c("full", "block", "fixed")),
+       check = checkmate::check_choice(
+         parameter_type,
+         c("full", "block", "fixed")
+       ),
        var_name = "parameter_type"
      )
 
@@ -521,7 +548,10 @@ Process <- R6::R6Class("Process",
 
      ### input checks
      oeli::input_check_response(
-       check = checkmate::check_choice(parameter_type, c("full", "block", "fixed")),
+       check = checkmate::check_choice(
+         parameter_type,
+         c("full", "block", "fixed")
+       ),
        var_name = "parameter_type"
      )
 
@@ -611,7 +641,9 @@ Process <- R6::R6Class("Process",
 
        ### check time limit
        if (self$get_seconds_total() >= self$seconds_limit) {
-         message <- paste("time limit of", self$seconds_limit, "seconds reached")
+         message <- paste(
+           "time limit of", self$seconds_limit, "seconds reached"
+         )
          stopping <- TRUE
          break
        }
@@ -671,8 +703,8 @@ Process <- R6::R6Class("Process",
 
  active = list(
 
-   #' @field npar \[`integer(1)`\]\cr
-   #' The (total) length of the target argument(s).
+   #' @field npar \[`integer()`\]\cr
+   #' The length(s) of the target argument(s).
 
    npar = function(value) {
      if (missing(value)) {
@@ -686,7 +718,7 @@ Process <- R6::R6Class("Process",
    },
 
    #' @field partition \[`character(1)` | `list()`\]\cr
-   #' Defines the parameter partition, and can be either
+   #' Defines the parameter partition. It can be
    #'
    #' * `"sequential"` for treating each parameter separately,
    #' * `"random"` for a random partition in each iteration,
@@ -700,7 +732,10 @@ Process <- R6::R6Class("Process",
      } else {
        if (checkmate::test_string(value)) {
          oeli::input_check_response(
-           check = checkmate::check_choice(value, c("sequential", "random", "none")),
+           check = checkmate::check_choice(
+             value,
+             c("sequential", "random", "none")
+           ),
            var_name = "partition"
          )
        } else if (checkmate::test_list(value)) {
@@ -709,11 +744,11 @@ Process <- R6::R6Class("Process",
            var_name = "partition"
          )
 
-         ### only parameter indices 1,...,'self$npar' allowed
+         ### only parameter indices 1,...,'sum(self$npar)' allowed
          oeli::input_check_response(
            check = checkmate::check_integerish(
              unlist(value),
-             lower = 1, upper = self$npar, any.missing = FALSE
+             lower = 1, upper = sum(self$npar), any.missing = FALSE
            ),
            var_name = "partition",
            prefix = "Elements in {.cls list} {.var partition} are bad:"
@@ -731,7 +766,7 @@ Process <- R6::R6Class("Process",
    #' @field new_block_probability \[`numeric(1)`\]\cr
    #' Only relevant if `partition = "random"`.
    #'
-   #' The probability for a new parameter block when creating a random
+   #' The probability of creating a new parameter block when creating a random
    #' partition.
    #'
    #' Values close to 0 result in larger parameter blocks, values close to 1
@@ -759,7 +794,9 @@ Process <- R6::R6Class("Process",
        private$.minimum_block_number
      } else {
        oeli::input_check_response(
-         check = checkmate::check_int(value, lower = 1, upper = self$npar),
+         check = checkmate::check_int(
+           value, lower = 1, upper = sum(self$npar)
+         ),
          var_name = "minimum_block_number"
        )
        private$.minimum_block_number <- value
@@ -824,9 +861,9 @@ Process <- R6::R6Class("Process",
    #'
    #' Can also be `Inf` for no time limit.
    #'
-   #' Note that this stopping criteria is only checked *after* a sub-problem is
-   #' solved and not *within* solving a sub-problem, so the actual process time can
-   #' exceed this limit.
+   #' Note that this stopping criterion is only checked *after* a sub-problem is
+   #' solved and not *within* solving a sub-problem, so the actual process
+   #' time can exceed this limit.
 
    seconds_limit = function(value) {
      if (missing(value)) {
@@ -845,8 +882,8 @@ Process <- R6::R6Class("Process",
 
    #' @field tolerance_value \[`numeric(1)`\]\cr
    #' A non-negative tolerance value. The AO process terminates
-   #' if the absolute difference between the current function value and the one
-   #' before \code{tolerance_history} iterations is smaller than
+   #' if the absolute difference between the current function value and the
+   #' value from \code{tolerance_history} iterations earlier is smaller than
    #' \code{tolerance_value}.
    #'
    #' Can be `0` for no value threshold.
@@ -865,13 +902,13 @@ Process <- R6::R6Class("Process",
 
    #' @field tolerance_parameter \[`numeric(1)`\]\cr
    #' A non-negative tolerance value. The AO process terminates if
-   #' the distance between the current estimate and the before
-   #' \code{tolerance_history} iterations is smaller than
+   #' the distance between the current estimate and the estimate from
+   #' \code{tolerance_history} iterations earlier is smaller than
    #' \code{tolerance_parameter}.
    #'
    #' Can be `0` for no parameter threshold.
    #'
-   #' By default, the distance is measured using the euclidean norm, but another
+   #' By default, the distance is measured using the Euclidean norm, but another
    #' norm can be specified via the \code{tolerance_parameter_norm} field.
 
    tolerance_parameter = function(value) {
@@ -887,13 +924,13 @@ Process <- R6::R6Class("Process",
    },
 
    #' @field tolerance_parameter_norm \[`function`\]\cr
-   #' The norm that measures the distance between the current estimate and the
-   #' one from the last iteration. If the distance is smaller than
+   #' The norm that measures the distance between two estimates. If the distance
+   #' is smaller than
    #' \code{tolerance_parameter}, the AO process is terminated.
    #'
    #' It must be of the form \code{function(x, y)} for two vector inputs
    #' \code{x} and \code{y}, and return a single \code{numeric} value.
-   #' By default, the euclidean norm \code{function(x, y) sqrt(sum((x - y)^2))}
+   #' By default, the Euclidean norm \code{function(x, y) sqrt(sum((x - y)^2))}
    #' is used.
 
    tolerance_parameter_norm = function(value) {
@@ -901,7 +938,11 @@ Process <- R6::R6Class("Process",
        private$.tolerance_parameter_norm[[1]]
      } else {
        oeli::input_check_response(
-         check = checkmate::check_function(value, args = c("x", "y"), nargs = 2),
+         check = checkmate::check_function(
+           value,
+           args = c("x", "y"),
+           nargs = 2
+         ),
          var_name = "tolerance_parameter_norm"
        )
        private$.tolerance_parameter_norm <- list(value)
@@ -967,7 +1008,7 @@ Process <- R6::R6Class("Process",
        oeli::input_check_response(
          check = checkmate::check_integerish(
            value,
-           unique = TRUE, lower = 1, upper = self$npar
+           unique = TRUE, lower = 1, upper = sum(self$npar)
          ),
          var_name = "block"
        )
@@ -984,23 +1025,30 @@ Process <- R6::R6Class("Process",
    #'
    #' * \code{estimate} is the parameter vector at termination.
    #' * \code{value} is the function value at termination.
-   #' * \code{details} is a `data.frame` with full information about the AO process.
+   #' * \code{details} is a `data.frame` with full information about the
+   #'   AO process.
    #'   For each iteration (column `iteration`) it contains the function value
-   #'   (column `value`), parameter values (columns starting with `p` followed by
-   #'   the parameter index), the active parameter block (columns starting with `b`
-   #'   followed by the parameter index, where `1` stands for a parameter contained
-   #'   in the active parameter block and `0` if not), and computation times in seconds
-   #'   (column `seconds`). Only available if `add_details = TRUE`.
+   #'   (column `value`), parameter values (columns starting with `p`
+   #'   followed by the parameter index), the active parameter block
+   #'   (columns starting with `b` followed by the parameter index, where
+   #'   `1` stands for a parameter contained in the active parameter block
+   #'   and `0` if not), and computation times in seconds (column `seconds`).
+   #'   Only available if `add_details = TRUE`.
    #' * \code{seconds} is the overall computation time in seconds.
-   #' * \code{stopping_reason} is a message why the AO process has terminated.
+   #' * \code{stopping_reason} is a message explaining why the AO process
+   #'   terminated.
 
    output = function(value) {
      if (missing(value)) {
+       estimate <- self$get_parameter_best("full")
        c(
-         list(
-           "estimate" = self$get_parameter_best("full"),
-           "value" = self$get_value_best()
-         ),
+         list("estimate" = estimate),
+         if (!is.null(private$.target)) {
+           list("estimate_split" = split_by_target(
+             estimate, private$.target, self$npar
+           ))
+         },
+         list("value" = self$get_value_best()),
          if (self$add_details) list("details" = self$get_details()),
          list(
            "seconds" = self$get_seconds_total(),
@@ -1019,6 +1067,7 @@ Process <- R6::R6Class("Process",
  private = list(
 
    ### inputs
+   .target = character(),
    .npar = integer(),
    .partition = NULL,
    .new_block_probability = numeric(),
@@ -1043,38 +1092,6 @@ Process <- R6::R6Class("Process",
 
    ### error status
    .error = FALSE,
-   .error_message = character(),
-
-   # Generated randomized blocks.
-   # @param x The parameter indices.
-   # @param p The probability to generate a new block.
-   # @param min The minimum number of blocks.
-   # @author Siddhartha Chib
-   .generate_random_partition = function(
-      x = seq_len(self$npar),
-      p = self$new_block_probability,
-      min = self$minimum_block_number
-   ) {
-     if (min == length(x)) {
-       return(as.list(x))
-     }
-     x <- sample(x, replace = FALSE)
-     n <- length(x)
-     y <- sample(0:1, n, replace = TRUE, prob = c(1 - p, p))
-     y[1] <- 1
-     ind <- which(y == 1)
-     if (length(ind) < min) {
-       ind <- sort(c(ind, sample(which(y == 0), size = min - length(ind))))
-     }
-     B <- length(ind)
-     blocks <- vector("list", B)
-     for (j in seq_len(B)) {
-       s <- ind[j]
-       e <- if (j < B) ind[j + 1] - 1 else n
-       xj <- x[s:e]
-       blocks[[j]] <- xj[order(xj)]
-     }
-     blocks
-   }
+   .error_message = character()
  )
 )

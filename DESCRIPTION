@@ -1,6 +1,6 @@
 Package: ao
 Title: Alternating Optimization
-Version: 1.2.2
+Version: 1.2.3
 Authors@R: 
     c(
     person(given = "Lennart",
@@ -8,32 +8,33 @@ Authors@R:
            role = c("aut", "cre"),
            email = "oelschlaeger.lennart@gmail.com",
            comment = c(ORCID = "0000-0001-5421-9313")),
-    person(given = "Siddhartha", 
-           family = "Chib", 
+    person(given = "Siddhartha",
+           family = "Chib",
            role = "ctb",
            email = "chib@wustl.edu")
     )
-Description: An iterative process that optimizes a function by alternately 
-    performing restricted optimization over parameter subsets. Instead of joint 
-    optimization, it breaks the optimization problem down into simpler 
-    sub-problems. This approach can make optimization feasible when joint 
-    optimization is too difficult.
+Description: Implementation of an iterative process that optimizes a function by
+    alternately performing restricted optimization over parameter subsets.
+    Instead of solving one joint optimization problem, alternating optimization
+    breaks it into smaller sub-problems. This approach can make optimization
+    feasible when joint optimization is too difficult.
 URL: https://loelschlaeger.de/ao/, https://github.com/loelschlaeger/ao/
 BugReports: https://github.com/loelschlaeger/ao/issues
 License: GPL-3
 Encoding: UTF-8
-RoxygenNote: 7.3.2
-Imports: checkmate, cli, future.apply, oeli (>= 0.7.3), progressr, R6,
-        stats, utils
+Language: en-US
+RoxygenNote: 7.3.3
+Imports: checkmate, cli, future.apply, oeli (>= 0.7.5), optimizeR (>=
+        1.2.1), progressr, R6, stats, utils
 Suggests: devtools, ggplot2, knitr, rmarkdown, testthat (>= 3.0.0)
 Config/testthat/edition: 3
 VignetteBuilder: knitr
-Depends: R (>= 4.0.0), optimizeR (>= 1.2.1)
+Depends: R (>= 4.1.0)
 NeedsCompilation: no
-Packaged: 2025-12-15 16:48:14 UTC; Lennart Oelschläger
+Packaged: 2026-05-11 14:44:03 UTC; Lennart Oelschläger
 Author: Lennart Oelschläger [aut, cre] (ORCID:
     <https://orcid.org/0000-0001-5421-9313>),
   Siddhartha Chib [ctb]
 Maintainer: Lennart Oelschläger <oelschlaeger.lennart@gmail.com>
 Repository: CRAN
-Date/Publication: 2025-12-15 17:00:02 UTC
+Date/Publication: 2026-05-11 17:10:09 UTC

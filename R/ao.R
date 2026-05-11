@@ -7,8 +7,8 @@
 #'
 #' @details
 #' ## Multiple processes
-#' AO can suffer from local optima. To increase the likelihood of reaching the
-#' global optimum, you can specify:
+#' AO can suffer from local optima. To increase the likelihood of finding a
+#' better optimum, you can specify:
 #'
 #' * multiple starting parameters
 #' * multiple parameter partitions
@@ -20,8 +20,8 @@
 #' process.
 #'
 #' ### Output value
-#' In the case of multiple processes, the output values refer to the optimal
-#' (with respect to function value) AO processes.
+#' In the case of multiple processes, the output values refer to the best
+#' AO process with respect to function value.
 #'
 #' If `add_details = TRUE`, the following elements are added:
 #'
@@ -31,7 +31,7 @@
 #'   additional column `process` with an index for the different processes.
 #' * \code{seconds_each} gives the computation time in seconds for each process.
 #' * \code{stopping_reasons} gives the termination message for each process.
-#' * \code{processes} give details how the different processes were specified.
+#' * \code{processes} gives details on how the processes were specified.
 #'
 #' ### Parallel computation
 #' By default, processes run sequentially. However, since they are independent,
@@ -61,8 +61,8 @@
 #' as \code{initial}, optionally followed by any other arguments specified by
 #' the \code{...} argument.
 #'
-#' If \code{f} is to be optimized over an argument other than the first, or more
-#' than one argument, this has to be specified via the \code{target} argument.
+#' If \code{f} is optimized over an argument other than the first, or over more
+#' than one argument, specify this with the \code{target} argument.
 #'
 #' @param initial \[`numeric()` | `list()`\]\cr
 #' The starting parameter values for the target argument(s).
@@ -70,32 +70,32 @@
 #' This can also be a `list` of multiple starting parameter values, see details.
 #'
 #' @param target \[`character()` | `NULL`\]\cr
-#' The name(s) of the argument(s) over which \code{f} gets optimized.
+#' The name(s) of the argument(s) over which \code{f} is optimized.
 #'
 #' This can only be \code{numeric} arguments.
 #'
-#' Can be `NULL` (default), then it is the first argument of `f`.
+#' If `NULL` (default), the first argument of `f` is optimized.
 #'
 #' @param npar \[`integer()`\]\cr
 #' The length(s) of the target argument(s).
 #'
-#' Must be specified if more than two target arguments are specified via
+#' Must be specified if more than one target argument is specified via
 #' the `target` argument.
 #'
 #' Can be `NULL` if there is only one target argument, in which case `npar` is
-#' set to be `length(initial)`.
+#' set to `length(initial)`.
 #'
 #' @param gradient \[`function` | `NULL`\]\cr
-#' Optionally a \code{function} that returns the gradient of \code{f}.
+#' An optional \code{function} that returns the gradient of \code{f}.
 #'
-#' The function call of \code{gradient} must be identical to \code{f}.
+#' The function signature of \code{gradient} must be identical to \code{f}.
 #'
 #' Ignored if `base_optimizer` does not support custom gradient.
 #'
 #' @param hessian \[`function` | `NULL`\]\cr
-#' Optionally a \code{function} that returns the Hessian of \code{f}.
+#' An optional \code{function} that returns the Hessian of \code{f}.
 #'
-#' The function call of \code{hessian} must be identical to \code{f}.
+#' The function signature of \code{hessian} must be identical to \code{f}.
 #'
 #' Ignored if `base_optimizer` does not support custom Hessian.
 #'
@@ -103,7 +103,7 @@
 #' Additional arguments to be passed to \code{f} (and \code{gradient}).
 #'
 #' @param partition \[`character(1)` | `list()`\]\cr
-#' Defines the parameter partition, and can be either
+#' Defines the parameter partition. It can be
 #'
 #' * `"sequential"` for treating each parameter separately,
 #' * `"random"` for a random partition in each iteration,
@@ -116,7 +116,7 @@
 #' @param new_block_probability \[`numeric(1)`\]\cr
 #' Only relevant if `partition = "random"`.
 #'
-#' The probability for a new parameter block when creating a random
+#' The probability of creating a new parameter block when creating a random
 #' partition.
 #'
 #' Values close to 0 result in larger parameter blocks, values close to 1
@@ -133,7 +133,7 @@
 #' If \code{FALSE}, maximization is performed.
 #'
 #' @param lower,upper \[`numeric()` | `NULL`\]\cr
-#' Optionally lower and upper parameter bounds.
+#' Optional lower and upper parameter bounds.
 #'
 #' Ignored if `base_optimizer` does not support parameter bounds.
 #'
@@ -148,37 +148,37 @@
 #'
 #' Can also be `Inf` for no time limit.
 #'
-#' Note that this stopping criteria is only checked *after* a sub-problem is
-#' solved and not *within* solving a sub-problem, so the actual process time can
-#' exceed this limit.
+#' Note that this stopping criterion is only checked *after* a sub-problem is
+#' solved and not *within* solving a sub-problem, so the actual process
+#' time can exceed this limit.
 #'
 #' @param tolerance_value \[`numeric(1)`\]\cr
 #' A non-negative tolerance value. The AO process terminates
-#' if the absolute difference between the current function value and the one
-#' before \code{tolerance_history} iterations is smaller than
+#' if the absolute difference between the current function value and the value
+#' from \code{tolerance_history} iterations earlier is smaller than
 #' \code{tolerance_value}.
 #'
 #' Can be `0` for no value threshold.
 #'
 #' @param tolerance_parameter \[`numeric(1)`\]\cr
 #' A non-negative tolerance value. The AO process terminates if
-#' the distance between the current estimate and the before
-#' \code{tolerance_history} iterations is smaller than
+#' the distance between the current estimate and the estimate from
+#' \code{tolerance_history} iterations earlier is smaller than
 #' \code{tolerance_parameter}.
 #'
 #' Can be `0` for no parameter threshold.
 #'
-#' By default, the distance is measured using the euclidean norm, but another
+#' By default, the distance is measured using the Euclidean norm, but another
 #' norm can be specified via the \code{tolerance_parameter_norm} argument.
 #'
 #' @param tolerance_parameter_norm \[`function`\]\cr
-#' The norm that measures the distance between the current estimate and the
-#' one from the last iteration. If the distance is smaller than
+#' The norm that measures the distance between two estimates. If the distance
+#' is smaller than
 #' \code{tolerance_parameter}, the AO process is terminated.
 #'
 #' It must be of the form \code{function(x, y)} for two vector inputs
 #' \code{x} and \code{y}, and return a single \code{numeric} value.
-#' By default, the euclidean norm \code{function(x, y) sqrt(sum((x - y)^2))}
+#' By default, the Euclidean norm \code{function(x, y) sqrt(sum((x - y)^2))}
 #' is used.
 #'
 #' @param tolerance_history \[`integer(1)`\]\cr
@@ -190,7 +190,8 @@
 #' \code{\link[optimizeR]{Optimizer}}. It numerically solves the sub-problems.
 #'
 #' By default, the \code{\link[stats]{optim}} optimizer with
-#' \code{method = "L-BFGS-B"} is used.
+#' \code{method = "L-BFGS-B"} is used. The default value for the number of
+#' iterations within each block is 10.
 #'
 #' This can also be a `list` of multiple base optimizers, see details.
 #'
@@ -206,19 +207,20 @@
 #' Add details about the AO process to the output?
 #'
 #' @return
-#' A \code{list} with the following elements:
+#' A `list` with the following elements:
 #'
-#' * \code{estimate} is the parameter vector at termination.
-#' * \code{value} is the function value at termination.
-#' * \code{details} is a `data.frame` with information about the AO process:
+#' * `estimate` is the parameter vector at termination.
+#' * `estimate_split` is `estimate` split by `target` (only when applicable).
+#' * `value` is the function value at termination.
+#' * `details` is a `data.frame` with information about the AO process:
 #'   For each iteration (column `iteration`) it contains the function value
 #'   (column `value`), parameter values (columns starting with `p` followed by
 #'   the parameter index), the active parameter block (columns starting with `b`
 #'   followed by the parameter index, where `1` stands for a parameter contained
 #'   in the active parameter block and `0` if not), and computation times in
 #'   seconds (column `seconds`). Only available if `add_details = TRUE`.
-#' * \code{seconds} is the overall computation time in seconds.
-#' * \code{stopping_reason} is a message why the AO process has terminated.
+#' * `seconds` is the overall computation time in seconds.
+#' * `stopping_reason` is a message explaining why the AO process terminated.
 #'
 #' In the case of multiple processes, the output changes slightly, see details.
 #'
@@ -230,12 +232,48 @@
 #'
 #' # Example 2: Maximization of 2-class Gaussian mixture log-likelihood --------
 #'
+#' normal_mixture_loglik_uc = function(mu, logsd, eta, data) {
+#'   sd <- exp(logsd)
+#'   e <- exp(eta[1])
+#'   den <- 1 + e
+#'   q1 <- e / den
+#'   q2 <- 1 / den
+#'   l1 <- log(q1) + dnorm(data, mu[1], sd[1], log = TRUE)
+#'   l2 <- log(q2) + dnorm(data, mu[2], sd[2], log = TRUE)
+#'   m <- pmax(l1, l2)
+#'   sum(m + log(exp(l1 - m) + exp(l2 - m)))
+#' }
+#'
+#' set.seed(123)
+#'
+#' data <- datasets::faithful$eruptions
+#'
+#' fit <- ao(
+#'   f = normal_mixture_loglik_uc,
+#'   initial = c(mean(data) + c(-1, 1), rep(log(sd(data)), 2), 0),
+#'   target = c("mu", "logsd", "eta"),
+#'   npar = c(2, 2, 1),
+#'   data = data,
+#'   partition = "random",
+#'   base_optimizer = optimizeR::Optimizer$new("ucminf::ucminf"),
+#'   minimize = FALSE,
+#'   add_details = FALSE
+#' )
+#'
+#' (muhat <- fit$estimate_split$mu)
+#' (sdhat <- exp(fit$estimate_split$logsd))
+#' e <- exp(fit$estimate_split$eta)
+#' den <- 1 + e
+#' (qhat <- c(e / den, 1 / den))
+#'
+#' # Example 3: Constrained Optimization in the Setting of Example 2 -----------
+#'
 #' # target arguments:
 #' # - class means mu (2, unrestricted)
 #' # - class standard deviations sd (2, must be non-negative)
 #' # - class proportion lambda (only 1 for identification, must be in [0, 1])
 #'
-#' normal_mixture_llk <- function(mu, sd, lambda, data) {
+#' normal_mixture_loglik <- function(mu, sd, lambda, data) {
 #'   c1 <- lambda * dnorm(data, mu[1], sd[1])
 #'   c2 <- (1 - lambda) * dnorm(data, mu[2], sd[2])
 #'   sum(log(c1 + c2))
@@ -244,7 +282,7 @@
 #' set.seed(123)
 #'
 #' ao(
-#'   f = normal_mixture_llk,
+#'   f = normal_mixture_loglik,
 #'   initial = runif(5),
 #'   target = c("mu", "sd", "lambda"),
 #'   npar = c(2, 2, 1),
@@ -259,29 +297,31 @@
 #' @export
 
 ao <- function(
-    f,
-    initial,
-    target = NULL,
-    npar = NULL,
-    gradient = NULL,
-    hessian = NULL,
-    ...,
-    partition = "sequential",
-    new_block_probability = 0.3,
-    minimum_block_number = 1,
-    minimize = TRUE,
-    lower = NULL,
-    upper = NULL,
-    iteration_limit = Inf,
-    seconds_limit = Inf,
-    tolerance_value = 1e-6,
-    tolerance_parameter = 1e-6,
-    tolerance_parameter_norm = function(x, y) sqrt(sum((x - y)^2)),
-    tolerance_history = 1,
-    base_optimizer = Optimizer$new("stats::optim", method = "L-BFGS-B"),
-    verbose = FALSE,
-    hide_warnings = TRUE,
-    add_details = TRUE
+  f,
+  initial,
+  target = NULL,
+  npar = NULL,
+  gradient = NULL,
+  hessian = NULL,
+  ...,
+  partition = "sequential",
+  new_block_probability = 0.3,
+  minimum_block_number = 1,
+  minimize = TRUE,
+  lower = NULL,
+  upper = NULL,
+  iteration_limit = Inf,
+  seconds_limit = Inf,
+  tolerance_value = 1e-6,
+  tolerance_parameter = 1e-6,
+  tolerance_parameter_norm = function(x, y) sqrt(sum((x - y)^2)),
+  tolerance_history = 1,
+  base_optimizer = optimizeR::Optimizer$new(
+    "stats::optim", method = "L-BFGS-B", control = list("maxit" = 10)
+  ),
+  verbose = FALSE,
+  hide_warnings = TRUE,
+  add_details = TRUE
 ) {
 
   ### check if required arguments are specified
@@ -294,13 +334,14 @@ ao <- function(
     var_name = "initial"
   )
 
-  ### multiple processes?
+  ### multiple processes? then call ao() for each one
   if (
     is.list(initial) ||
     (is.list(partition) && !checkmate::test_list(partition, "numeric")) ||
     is.list(base_optimizer)
   ) {
-    ### build processes
+
+    ### build matrix of processes
     if (!is.list(initial)) {
       initial <- list(initial)
     }
@@ -315,7 +356,7 @@ ao <- function(
     )
     nprocesses <- nrow(processes)
 
-    ### run processes
+    ### run processes (determined by future)
     if (isTRUE(verbose)) {
       verbose <- FALSE
       if (!isTRUE(hide_warnings)) {
@@ -367,43 +408,8 @@ ao <- function(
       future.seed = TRUE
     )
 
-    ### combine results
-    values <- vapply(results, `[[`, numeric(1), "value")
-    stopping_reasons <- vapply(results, `[[`, character(1), "stopping_reason")
-    optimal_process <- ifelse(isTRUE(minimize), which.min(values), which.max(values))
-    seconds_each <- vapply(results, `[[`, numeric(1), "seconds")
-    if (isTRUE(add_details)) {
-      details_list <- list()
-      for (process in seq_len(nprocesses)) {
-        details_list[[process]] <- cbind(
-          process = process,
-          results[[process]][["details"]]
-        )
-      }
-      return(
-        list(
-          "estimate" = lapply(results, `[[`, "estimate")[[optimal_process]],
-          "estimates" = lapply(results, `[[`, "estimate"),
-          "value" = values[optimal_process],
-          "values" = as.list(values),
-          "details" = do.call("rbind", details_list),
-          "seconds" = sum(seconds_each),
-          "seconds_each" = as.list(seconds_each),
-          "stopping_reason" = stopping_reasons[optimal_process],
-          "stopping_reasons" = as.list(stopping_reasons),
-          "processes" = processes
-        )
-      )
-    } else {
-      return(
-        list(
-          "estimate" = lapply(results, `[[`, "estimate")[[optimal_process]],
-          "value" = values[optimal_process],
-          "seconds" = sum(seconds_each),
-          "stopping_reason" = stopping_reasons[optimal_process]
-        )
-      )
-    }
+    ### merge and return results of multiple processes
+    return(merge_results(results, minimize, add_details, processes))
   }
 
   ### input checks and building of objects
@@ -412,6 +418,7 @@ ao <- function(
     var_name = "initial"
   )
   if (is.null(npar)) {
+    ### if npar is not defined, set it to length of initial vector
     npar <- length(initial)
   }
   objective <- Objective$new(f = f, target = target, npar = npar, ...)
@@ -420,30 +427,31 @@ ao <- function(
       check = checkmate::check_function(gradient),
       var_name = "gradient"
     )
-    objective$set_gradient(gradient = gradient, .verbose = FALSE)
+    objective$set_gradient(gradient = gradient, .verbose = isTRUE(verbose))
   }
   if (!is.null(hessian)) {
     oeli::input_check_response(
       check = checkmate::check_function(hessian),
       var_name = "hessian"
     )
-    objective$set_hessian(hessian = hessian, .verbose = FALSE)
+    objective$set_hessian(hessian = hessian, .verbose = isTRUE(verbose))
   }
-  npar <- sum(objective$npar)
   oeli::input_check_response(
-    check = oeli::check_numeric_vector(initial, len = npar),
+    check = oeli::check_numeric_vector(initial, len = sum(npar)),
     var_name = "initial"
   )
   oeli::input_check_response(
-    check = oeli::check_numeric_vector(lower, any.missing = FALSE, null.ok = TRUE),
+    check = oeli::check_numeric_vector(
+      lower, any.missing = FALSE, null.ok = TRUE
+    ),
     var_name = "lower"
   )
   if (!is.null(lower)) {
     if (length(lower) == 1) {
-      lower <- rep(lower, npar)
+      lower <- rep(lower, sum(npar))
     }
     oeli::input_check_response(
-      check = oeli::check_numeric_vector(lower, len = npar),
+      check = oeli::check_numeric_vector(lower, len = sum(npar)),
       var_name = "lower"
     )
     oeli::input_check_response(
@@ -452,15 +460,17 @@ ao <- function(
     )
   }
   oeli::input_check_response(
-    check = oeli::check_numeric_vector(upper, any.missing = FALSE, null.ok = TRUE),
+    check = oeli::check_numeric_vector(
+      upper, any.missing = FALSE, null.ok = TRUE
+    ),
     var_name = "upper"
   )
   if (!is.null(upper)) {
     if (length(upper) == 1) {
-      upper <- rep(upper, npar)
+      upper <- rep(upper, sum(npar))
     }
     oeli::input_check_response(
-      check = oeli::check_numeric_vector(upper, len = npar),
+      check = oeli::check_numeric_vector(upper, len = sum(npar)),
       var_name = "upper"
     )
     oeli::input_check_response(
@@ -476,6 +486,7 @@ ao <- function(
 
   ### building AO process
   process <- Process$new(
+    target = target,
     npar = npar,
     partition = partition,
     new_block_probability = new_block_probability,
@@ -496,7 +507,7 @@ ao <- function(
 
     block_objective <- Objective$new(
       f = function(p) {
-        theta <- numeric(npar)
+        theta <- numeric(sum(npar))
         theta[block] <- p
         theta[-block] <- parameter_fixed
         objective$evaluate(theta)
@@ -509,7 +520,7 @@ ao <- function(
     if (!is.null(gradient)) {
       block_objective$set_gradient(
         gradient = function(p) {
-          theta <- numeric(npar)
+          theta <- numeric(sum(npar))
           theta[block] <- p
           theta[-block] <- parameter_fixed
           objective$evaluate_gradient(theta)[block]
@@ -520,7 +531,7 @@ ao <- function(
     if (!is.null(hessian)) {
       block_objective$set_hessian(
         hessian = function(p) {
-          theta <- numeric(npar)
+          theta <- numeric(sum(npar))
           theta[block] <- p
           theta[-block] <- parameter_fixed
           objective$evaluate_hessian(theta)[block, block, drop = FALSE]
@@ -556,7 +567,7 @@ ao <- function(
     for (block in process$get_partition()) {
       process$block <- block
 
-      ### optimize block objective function
+      ### solve sub-problem
       sub_problem_out <- solve_sub_problem(
         parameter_block = process$get_parameter_latest("block"),
         parameter_fixed = process$get_parameter_latest("fixed"),
