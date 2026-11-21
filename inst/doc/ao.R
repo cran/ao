@@ -32,7 +32,7 @@ set.seed(2)
 #   tolerance_parameter_norm = function(x, y) sqrt(sum((x - y)^2)),
 #   tolerance_history = 1,
 #   base_optimizer = optimizeR::Optimizer$new(
-#     "stats::optim", method = "L-BFGS-B"
+#     "stats::optim", method = "L-BFGS-B", control = list("maxit" = 10)
 #   ),
 #   verbose = FALSE,
 #   hide_warnings = TRUE,
@@ -59,7 +59,7 @@ ggplot(grid, aes(x = Var1, y = Var2, z = z)) +
     x = "x",
     y = "y",
     fill = "value",
-    title = "Himmelblau function",
+    title = "Himmelblau's function",
     subtitle = "the four local minima are marked in green"
   ) +
   coord_fixed() +
@@ -158,12 +158,24 @@ ao(
   upper = c(Inf, Inf, Inf, Inf, 1)
 )
 
+## ----ao himmelblau corner-----------------------------------------------------
+ao(
+  f = himmelblau, initial = c(0, 0), lower = -5, upper = 0, add_details = FALSE
+)
+
+## ----ao himmelblau corner multiple--------------------------------------------
+ao(
+  f = himmelblau, initial = list(c(0, 0), c(-1, -1)), lower = -5, upper = 0,
+  add_details = FALSE
+)
+
 ## ----normal mixture type 4, warning = FALSE-----------------------------------
 normal_mixture_llk <- function(mu, sd, lambda, data) {
   c1 <- lambda * dnorm(data, mu[1], sd[1])
   c2 <- (1 - lambda) * dnorm(data, mu[2], sd[2])
   sum(log(c1 + c2))
 }
+set.seed(1)
 out <- ao(
   f = normal_mixture_llk,
   initial = list(runif(5), runif(5)),
